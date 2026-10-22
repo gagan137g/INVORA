@@ -31,12 +31,13 @@ def get_db_connection():
         return mysql.connector.connect(
             host=os.environ.get("DB_HOST", "localhost"),
             user=os.environ.get("DB_USER", "root"),
-            password=os.environ.get("DB_PASSWORD", "your_mysql_password"),
+            password=os.environ.get("DB_PASSWORD", "gagan@2006"),
             database=os.environ.get("DB_NAME", "invora_db")
         )
     except Exception as e:
         # Cloud / Local Fallback: SQLite
-        conn = sqlite3.connect("invora.db")
+        db_path = os.path.join(os.path.dirname(__file__), "invora.db")
+        conn = sqlite3.connect(db_path)
         conn.row_factory = sqlite3.Row
         return conn
 
@@ -89,6 +90,7 @@ def init_db():
 
 # Auto-initialize database tables on launch
 init_db()
+
 def query_db(query, args=(), one=False, commit=False):
     """
     Executes queries transparently across MySQL (%s) and SQLite (?).
@@ -122,6 +124,7 @@ def query_db(query, args=(), one=False, commit=False):
         rv = [dict(row) for row in rv]
 
     return (rv[0] if rv else None) if one else rv
+
 # =============================================================
 # ---------------------------
 # Database & File Helpers
@@ -142,14 +145,6 @@ def extract_text_and_pages(pdf_path):
     except Exception as e:
         print(f"Error extracting PDF: {e}")
         return "", 1
-
-def get_db_connection():
-    return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="gagan@2006",
-        database="invora_db"
-    )
 
 # ---------------------------
 # Stop Words & NLP Utilities
