@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>INVORA - Notes & Summaries</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: #f8fafc; color: #1e293b; padding: 40px 20px; }
+    .container { max-width: 900px; margin: 0 auto; }
+    .top-nav { margin-bottom: 24px; }
+    .back-btn { color: #64748b; text-decoration: none; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 8px; font-weight: 500; }
+    .back-btn:hover { color: #2563eb; }
+    h1 { font-size: 1.6rem; color: #0f172a; margin-bottom: 8px; }
+    p.sub { color: #64748b; font-size: 0.95rem; margin-bottom: 28px; }
+    
+    .doc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; }
+    .doc-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 2px 6px rgba(0,0,0,0.03); transition: transform 0.2s, box-shadow 0.2s; }
+    .doc-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.06); }
+    .card-top { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 16px; }
+    .file-icon { background: #eff6ff; color: #2563eb; width: 44px; height: 44px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+    .doc-title { font-weight: 600; color: #1e293b; font-size: 0.95rem; word-break: break-all; }
+    .doc-meta { font-size: 0.8rem; color: #94a3b8; margin-top: 4px; }
+    .btn-view { display: block; text-align: center; background: #2563eb; color: #ffffff; text-decoration: none; padding: 10px; border-radius: 6px; font-size: 0.88rem; font-weight: 600; }
+    .btn-view:hover { background: #1d4ed8; }
+    .empty-state { text-align: center; padding: 50px 20px; background: #ffffff; border-radius: 12px; border: 1px dashed #cbd5e1; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="top-nav">
+      <a href="/dashboard" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
+    </div>
+
+    <h1>📚 Notes & Summaries Hub</h1>
+    <p class="sub">Select an indexed document to view its quick summary and detailed study notes.</p>
+
+    {% if docs %}
+      <div class="doc-grid">
+        {% for d in docs %}
+          <div class="doc-card">
+            <div class="card-top">
+              <div class="file-icon"><i class="fa-regular fa-file-pdf"></i></div>
+              <div>
+                <div class="doc-title">{{ d.file_name }}</div>
+                <div class="doc-meta">{{ d.page_count }} Pages • {{ d.upload_date }}</div>
+              </div>
+            </div>
+            <a href="/document/{{ d.id }}" class="btn-view">Read Notes & Summary</a>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <i class="fa-regular fa-folder-open" style="font-size: 2.5rem; color: #94a3b8; margin-bottom: 12px;"></i>
+        <h3 style="color: #334155; margin-bottom: 6px;">No Documents Available</h3>
+        <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 16px;">Upload a study PDF first to generate structured notes and summaries.</p>
+        <a href="/upload" class="btn-view" style="display: inline-block; padding: 10px 20px;">Upload PDF</a>
+      </div>
+    {% endif %}
+  </div>
+</body>
+</html>

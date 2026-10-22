@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ doc.file_name }} - Notes & Summary</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: #f8fafc; color: #1e293b; padding: 40px 20px; }
+    .container { max-width: 900px; margin: auto; background: white; padding: 32px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .back { color: #2563eb; text-decoration: none; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 8px; margin-bottom: 16px; font-weight: 500; }
+    h1 { font-size: 1.4rem; color: #0f172a; margin-bottom: 20px; word-break: break-all; }
+    
+    .tab-bar { display: flex; gap: 12px; border-bottom: 2px solid #e2e8f0; margin-bottom: 24px; }
+    .tab-btn { background: none; border: none; padding: 12px 20px; font-size: 1rem; font-weight: 600; color: #64748b; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px; display: inline-flex; align-items: center; gap: 8px; }
+    .tab-btn.active { color: #2563eb; border-bottom-color: #2563eb; }
+
+    .content-box { display: none; white-space: pre-wrap; line-height: 1.8; color: #334155; font-size: 15px; background: #f8fafc; padding: 24px; border-radius: 8px; border: 1px solid #e2e8f0; }
+    .content-box.active { display: block; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/notes" class="back"><i class="fa-solid fa-arrow-left"></i> Back to Notes Hub</a>
+    
+    <h1>📄 {{ doc.file_name }}</h1>
+
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('summaryTab', this)"><i class="fa-solid fa-bolt"></i> Quick Summary</button>
+      <button class="tab-btn" onclick="switchTab('notesTab', this)"><i class="fa-solid fa-book-open"></i> Detailed Study Notes</button>
+    </div>
+
+    <div id="summaryTab" class="content-box active">
+{{ doc.summary_text or 'No summary recorded for this document yet. Re-upload to generate.' }}
+    </div>
+
+    <div id="notesTab" class="content-box">
+{{ doc.notes_text or 'No detailed notes recorded for this document yet. Re-upload to generate.' }}
+    </div>
+  </div>
+
+  <script>
+    function switchTab(tabId, btn) {
+      document.querySelectorAll('.content-box').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      btn.classList.add('active');
+    }
+  </script>
+</body>
+</html>

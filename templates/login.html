@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>INVORA - Login</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: radial-gradient(circle at 50% 20%, #152243 0%, #090e1f 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: #ffffff;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 640px;
+      background: #0f182e;
+      border: 1px solid #1e2c4f;
+      border-radius: 16px;
+      padding: 42px 40px;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45), 0 0 15px rgba(37, 99, 235, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .brand-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+
+    .brand-icon {
+      font-size: 2rem;
+      color: #3b82f6;
+    }
+
+    .brand-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: #ffffff;
+    }
+
+    .brand-subtitle {
+      font-size: 0.82rem;
+      color: #94a3b8;
+      margin-bottom: 20px;
+      letter-spacing: 0.3px;
+    }
+
+    .error-alert {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid #ef4444;
+      color: #fca5a5;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.84rem;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: shake 0.3s ease-in-out;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-4px); }
+      75% { transform: translateX(4px); }
+    }
+
+    .card-body-grid {
+      display: grid;
+      grid-template-columns: 1fr 180px;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .section-title {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #cbd5e1;
+      margin-bottom: 16px;
+    }
+
+    .form-group {
+      position: relative;
+      margin-bottom: 14px;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #64748b;
+      font-size: 0.9rem;
+    }
+
+    .form-control {
+      width: 100%;
+      background: #17233f;
+      border: 1px solid #23355d;
+      border-radius: 8px;
+      padding: 12px 40px 12px 38px;
+      font-size: 0.88rem;
+      color: #ffffff;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-control::placeholder {
+      color: #64748b;
+    }
+
+    .form-control:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #64748b;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    .password-toggle:hover {
+      color: #94a3b8;
+    }
+
+    .forgot-pass-wrap {
+      text-align: right;
+      margin-top: -6px;
+      margin-bottom: 14px;
+    }
+
+    .forgot-pass-link {
+      font-size: 0.78rem;
+      color: #94a3b8;
+      text-decoration: none;
+    }
+
+    .forgot-pass-link:hover {
+      color: #3b82f6;
+      text-decoration: underline;
+    }
+
+    .btn-login {
+      width: 100%;
+      background: #2563eb;
+      color: #ffffff;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 4px;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+    }
+
+    .btn-login:hover {
+      background: #1d4ed8;
+      box-shadow: 0 6px 18px rgba(37, 99, 235, 0.5);
+    }
+
+    .btn-login:active {
+      transform: scale(0.98);
+    }
+
+    .footer-text {
+      margin-top: 18px;
+      font-size: 0.82rem;
+      color: #94a3b8;
+      text-align: left;
+    }
+
+    .footer-text a {
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .footer-text a:hover {
+      text-decoration: underline;
+    }
+
+    .illustration-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .illustration-wrap svg {
+      width: 100%;
+      max-width: 170px;
+      height: auto;
+      filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3));
+    }
+
+    @media (max-width: 580px) {
+      .card-body-grid {
+        grid-template-columns: 1fr;
+      }
+      .illustration-wrap {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-card">
+    <div class="brand-header">
+      <i class="fa-solid fa-book-open brand-icon"></i>
+      <h1 class="brand-title">INVORA</h1>
+    </div>
+    <p class="brand-subtitle">AI-Powered Personal Learning Assistant</p>
+
+    {% if error %}
+      <div class="error-alert">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <span>{{ error }}</span>
+      </div>
+    {% endif %}
+
+    <div class="card-body-grid">
+      <div>
+        <p class="section-title">Login to your account</p>
+
+        <form action="/" method="POST" id="loginForm">
+          <div class="form-group">
+            <i class="fa-solid fa-user input-icon"></i>
+            <input 
+              type="email" 
+              name="email" 
+              id="emailInput"
+              class="form-control" 
+              placeholder="Enter your email" 
+              required
+              autocomplete="email"
+            >
+          </div>
+
+          <div class="form-group">
+            <i class="fa-solid fa-lock input-icon"></i>
+            <input 
+              type="password" 
+              name="password" 
+              id="passwordInput" 
+              class="form-control" 
+              placeholder="Enter your password" 
+              required
+              minlength="6"
+            >
+            <i class="fa-regular fa-eye password-toggle" id="togglePassword"></i>
+          </div>
+
+          <div class="forgot-pass-wrap">
+            <a href="/forgot-password" class="forgot-pass-link">Forgot password?</a>
+          </div>
+
+          <button type="submit" class="btn-login" id="submitBtn">Login</button>
+
+          <p class="footer-text">
+            Don't have an account? <a href="/register">Register</a>
+          </p>
+        </form>
+      </div>
+
+      <div class="illustration-wrap">
+        <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="35" y="30" width="130" height="150" rx="14" fill="#ffffff" fill-opacity="0.95"/>
+          <rect x="50" y="55" width="100" height="6" rx="3" fill="#cbd5e1"/>
+          <rect x="50" y="70" width="75" height="6" rx="3" fill="#cbd5e1"/>
+          <rect x="50" y="85" width="88" height="6" rx="3" fill="#cbd5e1"/>
+          <circle cx="100" cy="30" r="14" fill="#3b82f6"/>
+          <circle cx="100" cy="30" r="6" fill="#ffffff"/>
+          
+          <rect x="135" y="115" width="30" height="42" rx="10" fill="#2563eb"/>
+          <path d="M142 115 C142 105, 158 105, 158 115" stroke="#1d4ed8" stroke-width="4" stroke-linecap="round"/>
+
+          <circle cx="95" cy="115" r="14" fill="#fcd34d"/>
+          <path d="M84 112 C84 102 106 102 106 112" fill="#1e293b"/>
+          <path d="M80 160 C80 135 110 135 110 160 Z" fill="#3b82f6"/>
+          <rect x="68" y="145" width="40" height="24" rx="3" fill="#0f172a"/>
+          <rect x="71" y="148" width="34" height="18" rx="2" fill="#93c5fd"/>
+          <line x1="60" y1="168" x2="116" y2="168" stroke="#cbd5e1" stroke-width="4" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('passwordInput');
+
+    togglePassword.addEventListener('click', () => {
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+      togglePassword.classList.toggle('fa-eye');
+      togglePassword.classList.toggle('fa-eye-slash');
+    });
+
+    const loginForm = document.getElementById('loginForm');
+    const emailInput = document.getElementById('emailInput');
+
+    loginForm.addEventListener('submit', function(e) {
+      if (!emailInput.value.includes('@') || !emailInput.value.includes('.')) {
+        e.preventDefault();
+        alert('Please enter a valid email address.');
+        emailInput.focus();
+      }
+    });
+  </script>
+
+</body>
+</html>

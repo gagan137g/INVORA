@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>INVORA - Modular Chapter Roadmap</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: #f8fafc; color: #1e293b; padding: 30px 20px; }
+    .container { max-width: 900px; margin: 0 auto; }
+
+    .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .back-btn { color: #64748b; text-decoration: none; font-size: 0.88rem; font-weight: 500; display: inline-flex; align-items: center; gap: 8px; transition: color 0.15s; }
+    .back-btn:hover { color: #2563eb; }
+
+    /* SELECTOR CARD */
+    .filter-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px 24px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+    .filter-form { display: flex; gap: 14px; align-items: flex-end; }
+    .field-group { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+    .field-group label { font-size: 0.78rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.4px; }
+    .select-input { padding: 9px 12px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.86rem; background: #fff; width: 100%; color: #1e293b; outline: none; }
+    .select-input:focus { border-color: #2563eb; }
+
+    /* HEADER CARD */
+    .header-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px 26px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); display: flex; justify-content: space-between; align-items: center; }
+    .header-card h1 { font-size: 1.35rem; color: #0f172a; margin-bottom: 4px; }
+    .header-card p { font-size: 0.85rem; color: #64748b; }
+    .badge { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-size: 0.8rem; font-weight: 600; padding: 6px 14px; border-radius: 6px; white-space: nowrap; }
+
+    /* TIMELINE GRID */
+    .timeline { display: flex; flex-direction: column; gap: 14px; }
+    .chapter-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px 22px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.02); transition: transform 0.15s, border-color 0.15s; }
+    .chapter-card:hover { transform: translateY(-1px); border-color: #93c5fd; }
+
+    .card-left { display: flex; align-items: center; gap: 18px; }
+    .day-pill { background: #f1f5f9; color: #334155; font-size: 0.78rem; font-weight: 700; padding: 6px 12px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid #e2e8f0; min-width: 65px; text-align: center; }
+    
+    .chapter-info h3 { font-size: 0.98rem; color: #0f172a; margin-bottom: 3px; }
+    .chapter-info p { font-size: 0.82rem; color: #64748b; }
+
+    .card-right { display: flex; align-items: center; gap: 16px; }
+    .duration-tag { font-size: 0.82rem; font-weight: 600; color: #475569; display: flex; align-items: center; gap: 6px; }
+    .btn-quiz-jump { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; text-decoration: none; font-size: 0.82rem; font-weight: 600; padding: 7px 14px; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; transition: all 0.15s; }
+    .btn-quiz-jump:hover { background: #2563eb; color: #ffffff; border-color: #2563eb; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="top-bar">
+      <a href="/dashboard" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
+      <a href="/quiz?doc_id={{ current_doc.id }}" class="back-btn"><i class="fa-solid fa-pen-to-square"></i> Open Quiz Center</a>
+    </div>
+
+    <!-- DOCUMENT SWITCHER -->
+    <div class="filter-card">
+      <form class="filter-form">
+        <div class="field-group">
+          <label><i class="fa-solid fa-book"></i> Active Textbook</label>
+          <select class="select-input" onchange="window.location.href='/chapter-plan/' + this.value">
+            {% for d in all_docs %}
+              <option value="{{ d.id }}" {% if d.id == current_doc.id %}selected{% endif %}>
+                {{ d.file_name }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+      </form>
+    </div>
+
+    <!-- HEADER INFO -->
+    <div class="header-card">
+      <div>
+        <h1>🗺️ Modular Study Roadmap</h1>
+        <p>Textbook: <strong>{{ current_doc.file_name }}</strong></p>
+      </div>
+      <span class="badge">
+        <i class="fa-solid fa-layer-group"></i> {{ total_chapters }} Chapters Total
+      </span>
+    </div>
+
+    <!-- ROADMAP LIST -->
+    <div class="timeline">
+      {% for item in schedule %}
+        <div class="chapter-card">
+          <div class="card-left">
+            <span class="day-pill">{{ item.day }}</span>
+            <div class="chapter-info">
+              <h3>{{ item.chapter }}</h3>
+              <p>{{ item.focus }}</p>
+            </div>
+          </div>
+
+          <div class="card-right">
+            <span class="duration-tag">
+              <i class="fa-regular fa-clock"></i> {{ item.duration }}
+            </span>
+            <a href="/quiz?doc_id={{ current_doc.id }}&chapter_index={{ loop.index0 }}" class="btn-quiz-jump">
+              Take Quiz <i class="fa-solid fa-chevron-right"></i>
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>INVORA - Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: #f4f7fb; color: #1e293b; }
+    .layout { display: flex; min-height: 100vh; }
+
+    /* SIDEBAR */
+    .sidebar { width: 230px; background: #0b1a30; color: #fff; display: flex; flex-direction: column; flex-shrink: 0; }
+    .brand { display: flex; align-items: center; gap: 10px; padding: 22px 18px; }
+    .brand-icon { width: 34px; height: 34px; background: #2563eb; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+    .brand h2 { font-size: 1.1rem; }
+    .brand span { font-size: 0.65rem; color: #94a3b8; display: block; }
+    .nav-list { display: flex; flex-direction: column; gap: 4px; padding: 10px 12px; flex-grow: 1; }
+    .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px; color: #94a3b8; text-decoration: none; font-size: 0.88rem; border-radius: 6px; }
+    .nav-item:hover, .nav-item.active { background: #152b4b; color: #fff; }
+    .nav-item.active { border-left: 3px solid #2563eb; }
+    .sidebar-footer { padding: 14px 12px; border-top: 1px solid rgba(255,255,255,0.08); }
+
+    /* MAIN WRAPPER */
+    .content-area { flex-grow: 1; display: flex; flex-direction: column; }
+    .topbar { background: #fff; height: 58px; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; border-bottom: 1px solid #e2e8f0; }
+    .topbar-right { display: flex; align-items: center; gap: 16px; }
+    .icon-btn { background: none; border: none; font-size: 1rem; color: #64748b; cursor: pointer; }
+    .profile-pill { display: flex; align-items: center; gap: 8px; font-size: 0.88rem; font-weight: 500; }
+    .profile-pill img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+
+    /* DASHBOARD GRID */
+    .dashboard-grid { display: grid; grid-template-columns: 1fr 320px; gap: 24px; padding: 24px 30px; }
+
+    .welcome-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .welcome-row h1 { font-size: 1.45rem; font-weight: 700; }
+    .welcome-row p { color: #64748b; font-size: 0.88rem; margin-top: 2px; }
+    .robot-icon { font-size: 2.6rem; color: #3b82f6; }
+
+    /* 4 STATS ROW */
+    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 22px; }
+    .stat-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; display: flex; align-items: center; gap: 12px; }
+    .stat-icon { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1.1rem; }
+    .c-blue { background: #2563eb; } .c-green { background: #16a34a; } .c-purple { background: #7c3aed; } .c-orange { background: #ea580c; }
+    .stat-meta small { color: #64748b; font-size: 0.72rem; display: block; }
+    .stat-meta h3 { font-size: 1.3rem; margin: 1px 0; }
+    .stat-meta span { color: #94a3b8; font-size: 0.68rem; display: block; }
+
+    /* CARDS */
+    .card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 22px; }
+    .card h3 { font-size: 0.95rem; margin-bottom: 14px; font-weight: 600; }
+
+    /* UPLOAD DROPZONE */
+    .dropzone { border: 2px dashed #cbd5e1; border-radius: 10px; padding: 26px 16px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .upload-cloud { width: 46px; height: 46px; background: #eff6ff; color: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
+    .drop-btn { background: #2563eb; color: #fff; border: none; padding: 7px 22px; border-radius: 6px; font-size: 0.82rem; cursor: pointer; font-weight: 500; margin-top: 4px; }
+
+    /* QUICK ACTIONS (4 CLEAN COLUMNS) */
+    .quick-actions-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 22px; }
+    .qa-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; transition: transform 0.15s, box-shadow 0.15s; }
+    .qa-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .qa-icon { width: 36px; height: 36px; background: #eff6ff; color: #2563eb; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+    .qa-purple { background: #f5f3ff; color: #7c3aed; }
+    .qa-green { background: #f0fdf4; color: #16a34a; }
+    .qa-orange { background: #fff7ed; color: #ea580c; }
+    .qa-card strong { font-size: 0.82rem; display: block; }
+    .qa-card span { font-size: 0.7rem; color: #64748b; }
+
+    /* TABLE */
+    .data-tbl { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+    .data-tbl th { text-align: left; color: #64748b; font-weight: 500; padding: 8px 0; border-bottom: 1px solid #e2e8f0; }
+    .data-tbl td { padding: 11px 0; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+    .pdf-name { display: flex; align-items: center; gap: 8px; font-weight: 500; text-decoration: none; color: #1e293b; }
+    .pdf-name:hover { color: #2563eb; }
+    .tbl-action-group { display: flex; align-items: center; gap: 6px; }
+    .tbl-action { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 6px; text-decoration: none; color: #64748b; border: 1px solid #e2e8f0; background: #fff; transition: all 0.15s; }
+    .tbl-action:hover { background: #eff6ff; color: #2563eb; border-color: #bfdbfe; }
+
+    /* RIGHT PANEL PROGRESS & PLANNER */
+    .donut-wrap { display: flex; justify-content: center; margin: 12px 0 16px 0; }
+    .donut { width: 120px; height: 120px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #e2e8f0; }
+    .donut-hole { width: 95px; height: 95px; background: #fff; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .donut-hole h2 { font-size: 1.3rem; }
+    .donut-hole span { font-size: 0.62rem; color: #64748b; }
+    .prog-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 0.8rem; }
+    .prog-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+    .dot-b { background: #2563eb; } .dot-g { background: #16a34a; } .dot-p { background: #7c3aed; } .dot-o { background: #ea580c; }
+
+    .plan-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .plan-date { background: #f1f5f9; font-weight: 700; font-size: 0.85rem; padding: 6px 9px; border-radius: 6px; }
+    .plan-info h5 { font-size: 0.82rem; }
+    .plan-info p { font-size: 0.7rem; color: #64748b; }
+    .view-more { text-align: center; margin-top: 10px; font-size: 0.82rem; }
+    .view-more a { color: #2563eb; text-decoration: none; font-weight: 500; }
+  </style>
+</head>
+<body>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon"><i class="fa-solid fa-robot"></i></div>
+      <div>
+        <h2>INVORA</h2>
+        <span>AI Powered Study Assistant</span>
+      </div>
+    </div>
+    <nav class="nav-list">
+      <a href="/dashboard" class="nav-item active"><i class="fa-solid fa-house"></i> Dashboard</a>
+      <a href="/upload" class="nav-item"><i class="fa-regular fa-file-pdf"></i> Upload PDF</a>
+      <a href="/chat" class="nav-item"><i class="fa-regular fa-comment-dots"></i> AI Chat</a>
+      <a href="/notes" class="nav-item"><i class="fa-regular fa-note-sticky"></i> Notes & Summaries</a>
+      <a href="/quiz" class="nav-item"><i class="fa-regular fa-circle-question"></i> AI Quiz</a>
+      <a href="/chapter-plan" class="nav-item"><i class="fa-solid fa-diagram-project"></i> Chapter Roadmap</a>
+      <a href="/generate-plan" class="nav-item"><i class="fa-regular fa-calendar-days"></i> Study Planner</a>
+      <a href="/settings" class="nav-item"><i class="fa-solid fa-gear"></i> Settings</a>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="/logout" class="nav-item"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
+    </div>
+  </aside>
+
+  <!-- CONTENT -->
+  <div class="content-area">
+    <header class="topbar">
+      <button class="icon-btn"><i class="fa-solid fa-bars"></i></button>
+      <div class="topbar-right">
+        <button class="icon-btn"><i class="fa-regular fa-moon"></i></button>
+        <button class="icon-btn"><i class="fa-regular fa-bell"></i></button>
+        <div class="profile-pill">
+          <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&auto=format&fit=crop&q=80" alt="Profile">
+          <span>{{ username }}</span>
+          <i class="fa-solid fa-chevron-down" style="font-size: 0.65rem; color:#64748b;"></i>
+        </div>
+      </div>
+    </header>
+
+    <div class="dashboard-grid">
+      <!-- CENTER COLUMN -->
+      <main>
+        <div class="welcome-row">
+          <div>
+            <h1>Welcome back, {{ username }}! 👋</h1>
+            <p>Learn smarter with INVORA – your AI study companion.</p>
+          </div>
+          <div class="robot-icon"><i class="fa-solid fa-robot"></i></div>
+        </div>
+
+        <!-- 4 METRICS -->
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-icon c-blue"><i class="fa-solid fa-file-lines"></i></div>
+            <div class="stat-meta">
+              <small>PDFs Uploaded</small>
+              <h3>{{ total_pdfs }}</h3>
+              <span>Total Documents</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon c-green"><i class="fa-solid fa-list-check"></i></div>
+            <div class="stat-meta">
+              <small>Quizzes Taken</small>
+              <h3>{{ total_quizzes }}</h3>
+              <span>Total Quizzes</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon c-purple"><i class="fa-solid fa-chart-simple"></i></div>
+            <div class="stat-meta">
+              <small>Average Score</small>
+              <h3>{{ avg_score }}%</h3>
+              <span>Across all quizzes</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon c-orange"><i class="fa-regular fa-clock"></i></div>
+            <div class="stat-meta">
+              <small>Study Hours</small>
+              <h3>{{ study_hours }}</h3>
+              <span>This Week</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- UPLOAD MATERIAL -->
+        <div class="card" id="upload-sec">
+          <h3>Upload Study Material</h3>
+          <form id="pdfForm" action="/upload" method="POST" enctype="multipart/form-data">
+            <div class="dropzone" id="dropArea">
+              <div class="upload-cloud"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+              <strong style="font-size: 0.9rem;">Drag & Drop your PDF here</strong>
+              <span style="font-size: 0.75rem; color:#94a3b8;">or</span>
+              <label for="fileInput" class="drop-btn">Browse File</label>
+              <input type="file" id="fileInput" name="pdf_file" accept=".pdf" style="display:none;">
+              <span style="font-size: 0.72rem; color:#94a3b8; margin-top: 2px;">Only PDF files are supported</span>
+            </div>
+          </form>
+        </div>
+
+        <!-- QUICK ACTIONS (4 CARDS) -->
+        <h4 style="font-size: 0.95rem; margin-bottom: 12px;">Quick Actions</h4>
+        <div class="quick-actions-row">
+          <a href="/chat" class="qa-card">
+            <div class="qa-icon"><i class="fa-regular fa-comment-dots"></i></div>
+            <div><strong>AI Chat</strong><span>Ask anything</span></div>
+          </a>
+          <a href="/notes" class="qa-card">
+            <div class="qa-icon qa-green"><i class="fa-regular fa-newspaper"></i></div>
+            <div><strong>Generate Notes</strong><span>View & create notes</span></div>
+          </a>
+          <a href="/quiz" class="qa-card">
+            <div class="qa-icon qa-purple"><i class="fa-regular fa-circle-question"></i></div>
+            <div><strong>Create Quiz</strong><span>Test yourself</span></div>
+          </a>
+          <a href="/videos/{{ recent_pdfs[0].id if recent_pdfs else '' }}" class="qa-card">
+            <div class="qa-icon" style="background:#fee2e2; color:#ef4444;"><i class="fa-brands fa-youtube"></i></div>
+            <div><strong>Video Lectures</strong><span>Curated classes</span></div>
+          </a>
+          <a href="/generate-plan" class="qa-card">
+            <div class="qa-icon qa-orange"><i class="fa-regular fa-calendar"></i></div>
+            <div><strong>Study Planner</strong><span>Plan your study</span></div>
+          </a>
+        </div>
+
+        <!-- RECENT PDFS -->
+        <div class="card">
+          <h3>Recent PDFs</h3>
+          <table class="data-tbl">
+            <thead>
+              <tr><th>File Name</th><th>Uploaded On</th><th>Pages</th><th style="text-align: right; padding-right: 8px;">Actions</th></tr>
+            </thead>
+            <tbody>
+              {% for pdf in recent_pdfs %}
+              <tr>
+                <td>
+                  <a href="/document/{{ pdf.id }}" class="pdf-name">
+                    <i class="fa-solid fa-file-pdf" style="color:#ef4444;"></i> {{ pdf.file_name }}
+                  </a>
+                </td>
+                <td>{{ pdf.upload_date }}</td>
+                <td>{{ pdf.page_count }}</td>
+                <td style="text-align: right;">
+                  <div class="tbl-action-group" style="justify-content: flex-end;">
+                    <!-- View Notes / Summary -->
+                    <a href="/document/{{ pdf.id }}" class="tbl-action" title="View Summary & Notes">
+                      <i class="fa-regular fa-eye"></i>
+                    </a>
+                    <!-- Direct Chat with Context -->
+                    <a href="/chat" class="tbl-action" title="Ask Questions in AI Chat">
+                      <i class="fa-regular fa-comment-dots"></i>
+                    </a>
+                    
+                    <a href="/chapter-plan/{{ pdf.id }}" class="tbl-action" title="Chapter-wise Roadmap" style="color:#ea580c;">
+                      <i class="fa-solid fa-diagram-project"></i>
+                    </a>
+                    <a href="/videos/{{ pdf.id }}" class="tbl-action" title="Recommended Video Lectures" style="color:#ef4444;">
+                      <i class="fa-brands fa-youtube"></i>
+                    </a>
+                  </div>
+                </td>
+              </tr>
+              {% else %}
+              <tr><td colspan="4" style="text-align:center; color:#94a3b8; padding: 14px 0;">No PDFs uploaded yet.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <div class="view-more"><a href="/notes">View All PDFs &rarr;</a></div>
+        </div>
+      </main>
+
+      <!-- RIGHT SIDEBAR (PROGRESS & PLANNER) -->
+      <aside>
+        <div class="card">
+          <h3>Your Progress</h3>
+          <div class="donut-wrap">
+            <div id="donutGauge" class="donut">
+              <div class="donut-hole">
+                <h2>{{ overall_progress }}%</h2>
+                <span>Overall Progress</span>
+              </div>
+            </div>
+          </div>
+          <div class="prog-item">
+            <span><span class="prog-dot dot-b"></span> PDFs Read</span>
+            <strong>{{ pdf_progress }}%</strong>
+          </div>
+          <div class="prog-item">
+            <span><span class="prog-dot dot-g"></span> Quizzes Completed</span>
+            <strong>{{ quiz_progress }}%</strong>
+          </div>
+          <div class="prog-item">
+            <span><span class="prog-dot dot-p"></span> Notes Generated</span>
+            <strong>{{ pdf_progress }}%</strong>
+          </div>
+          <div class="prog-item">
+            <span><span class="prog-dot dot-o"></span> Study Planner</span>
+            <strong>{{ '100%' if upcoming_plans else '0%' }}</strong>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Upcoming Study Plan</h3>
+          {% for plan in upcoming_plans %}
+          <div class="plan-row">
+            <div class="plan-date">{{ plan.day_num }}</div>
+            <div class="plan-info">
+              <h5>{{ plan.plan_title }}</h5>
+              <p>{{ plan.start_t }} – {{ plan.end_t }}</p>
+            </div>
+          </div>
+          {% else %}
+          <p style="text-align:center; color:#94a3b8; font-size:0.8rem; padding: 12px 0;">No study tasks scheduled yet.</p>
+          {% endfor %}
+          <div class="view-more"><a href="/generate-plan">View Full Planner &rarr;</a></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Safe gauge render calculation
+  const progressPercent = Number("{{ overall_progress }}") || 0;
+  const donut = document.getElementById("donutGauge");
+  if (donut) {
+    const degrees = progressPercent * 3.6;
+    donut.style.background = `conic-gradient(#2563eb ${degrees}deg, #e2e8f0 0deg)`;
+  }
+
+  const dropArea = document.getElementById('dropArea');
+  const fileInput = document.getElementById('fileInput');
+  const pdfForm = document.getElementById('pdfForm');
+
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files.length) pdfForm.submit();
+  });
+  dropArea.addEventListener('dragover', (e) => { e.preventDefault(); dropArea.style.borderColor = '#2563eb'; });
+  dropArea.addEventListener('dragleave', () => { dropArea.style.borderColor = '#cbd5e1'; });
+  dropArea.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropArea.style.borderColor = '#cbd5e1';
+    if (e.dataTransfer.files.length) {
+      fileInput.files = e.dataTransfer.files;
+      pdfForm.submit();
+    }
+  });
+</script>
+
+</body>
+</html>

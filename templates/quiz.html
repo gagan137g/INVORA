@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>INVORA - Knowledge Assessment</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: #f8fafc; color: #1e293b; padding: 30px 20px; }
+    .container { max-width: 840px; margin: 0 auto; }
+    
+    .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .back-btn { color: #64748b; text-decoration: none; font-size: 0.88rem; font-weight: 500; display: inline-flex; align-items: center; gap: 8px; transition: color 0.15s; }
+    .back-btn:hover { color: #2563eb; }
+
+    .timer-badge { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; font-weight: 700; padding: 6px 14px; border-radius: 20px; font-size: 0.88rem; display: flex; align-items: center; gap: 8px; }
+
+    /* CHAPTER & SCOPE SELECTOR CARD */
+    .filter-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px 24px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+    .filter-form { display: flex; gap: 14px; align-items: flex-end; flex-wrap: wrap; }
+    .field-group { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 200px; }
+    .field-group label { font-size: 0.78rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.4px; display: flex; align-items: center; gap: 6px; }
+    .select-input { padding: 9px 12px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.86rem; background: #fff; width: 100%; color: #1e293b; outline: none; transition: border-color 0.15s; }
+    .select-input:focus { border-color: #2563eb; }
+    .btn-filter { background: #2563eb; color: #ffffff; border: none; padding: 9px 18px; border-radius: 6px; font-size: 0.86rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: background 0.15s; height: 38px; white-space: nowrap; }
+    .btn-filter:hover { background: #1d4ed8; }
+
+    .header-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px 26px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+    .header-card h1 { font-size: 1.35rem; color: #0f172a; margin-bottom: 4px; }
+    .header-card p { font-size: 0.85rem; color: #64748b; }
+    .scope-badge { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-size: 0.78rem; font-weight: 600; padding: 6px 14px; border-radius: 6px; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; }
+
+    .quiz-form { display: flex; flex-direction: column; gap: 20px; }
+
+    .question-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+    .q-number { font-size: 0.78rem; font-weight: 700; color: #2563eb; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .q-text { font-size: 0.95rem; font-weight: 600; color: #1e293b; line-height: 1.5; margin-bottom: 16px; white-space: pre-wrap; }
+
+    .options-grid { display: flex; flex-direction: column; gap: 10px; }
+    .option-label { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: 1px solid #cbd5e1; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 0.9rem; }
+    .option-label:hover { border-color: #93c5fd; background: #f8fafc; }
+    .option-label:has(input[type="radio"]:checked) { border-color: #2563eb; background: #eff6ff; color: #1d4ed8; font-weight: 500; }
+    .option-label input[type="radio"] { accent-color: #2563eb; width: 17px; height: 17px; flex-shrink: 0; }
+
+    .btn-submit { background: #2563eb; color: #ffffff; border: none; padding: 14px 28px; border-radius: 8px; font-size: 0.95rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 10px; box-shadow: 0 2px 6px rgba(37,99,235,0.25); transition: background 0.15s; }
+    .btn-submit:hover { background: #1d4ed8; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="top-bar">
+      <a href="/dashboard" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Exit to Dashboard</a>
+      <div class="timer-badge" id="timerBadge">
+        <i class="fa-solid fa-clock"></i> <span id="timerDisplay">--:--</span>
+      </div>
+    </div>
+
+    <!-- CHAPTER & TEXTBOOK SELECTION TOOLBAR -->
+    <div class="filter-card">
+      <form action="/quiz" method="POST" class="filter-form">
+        <div class="field-group">
+          <label><i class="fa-solid fa-book"></i> Textbook / PDF</label>
+          <select name="doc_id" class="select-input" onchange="window.location.href='/quiz?doc_id=' + this.value">
+            {% for d in all_docs %}
+              <option value="{{ d.id }}" {% if current_doc and d.id == current_doc.id %}selected{% endif %}>
+                {{ d.file_name }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label><i class="fa-solid fa-layer-group"></i> Chapter / Scope</label>
+          <select name="chapter_index" class="select-input">
+            <option value="all" {% if selected_chapter_idx is not defined or selected_chapter_idx == 'all' %}selected{% endif %}>
+              Entire Document (All Chapters)
+            </option>
+            {% for ch in chapters %}
+              <option value="{{ loop.index0 }}" {% if selected_chapter_idx is defined and loop.index0 == selected_chapter_idx %}selected{% endif %}>
+                {{ ch.title }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <button type="submit" name="action_generate" value="1" class="btn-filter">
+          <i class="fa-solid fa-arrows-rotate"></i> Load Questions
+        </button>
+      </form>
+    </div>
+
+    <!-- ASSESSMENT HEADER -->
+    <div class="header-card">
+      <div>
+        <h1>📝 Knowledge Assessment</h1>
+        <p>Target Material: <strong>{{ current_doc.file_name if current_doc else (doc_name if doc_name else 'Uploaded Material') }}</strong></p>
+      </div>
+      <span class="scope-badge">
+        <i class="fa-solid fa-bullseye"></i> {{ scope_label if scope_label else 'Full Document' }}
+      </span>
+    </div>
+
+    <!-- QUIZ QUESTIONS FORM -->
+    {% if questions and questions|length > 0 %}
+      <form action="/quiz" method="POST" id="quizForm" class="quiz-form">
+        <input type="hidden" name="doc_id" value="{{ current_doc.id if current_doc else '' }}">
+        <input type="hidden" name="total_questions" value="{{ questions|length }}">
+
+        {% for q in questions %}
+          {% set q_idx = loop.index0 %}
+          <div class="question-card">
+            <div class="q-number">Question {{ loop.index }} of {{ questions|length }}</div>
+            <div class="q-text">{{ q.question }}</div>
+
+            <!-- Pass question text and correct answer to backend for evaluation -->
+            <input type="hidden" name="q_text_{{ q_idx }}" value="{{ q.question }}">
+            <input type="hidden" name="ans_{{ q_idx }}" value="{{ q.answer }}">
+
+            <div class="options-grid">
+              {% for opt in q.options %}
+                <label class="option-label">
+                  <input type="radio" name="q_{{ q_idx }}" value="{{ opt }}" required>
+                  <span>{{ opt }}</span>
+                </label>
+              {% endfor %}
+            </div>
+          </div>
+        {% endfor %}
+
+        <button type="submit" name="action_submit" value="1" class="btn-submit" id="submitQuizBtn">
+          <i class="fa-solid fa-check"></i> Submit Assessment
+        </button>
+      </form>
+    {% else %}
+      <div class="header-card" style="text-align: center; display: block; padding: 40px;">
+        <p style="color: #64748b; font-size: 0.95rem;">
+          No questions generated for this selection. Select a chapter above and click <strong>Load Questions</strong>.
+        </p>
+      </div>
+    {% endif %}
+  </div>
+
+ <script>
+  // Dynamic timer: 1 minute per question (min: 3 mins, max: 60 mins)
+const questionsCount = parseInt("{{ questions|length if questions else 0 }}", 10);
+let totalSeconds = Math.min(Math.max(questionsCount * 60, 180), 3600);
+
+  const timerDisplay = document.getElementById('timerDisplay');
+  const quizForm = document.getElementById('quizForm');
+
+  function renderTime() {
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    if (timerDisplay) {
+      timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+  }
+
+  renderTime();
+
+  if (quizForm && questionsCount > 0) {
+    const countdown = setInterval(() => {
+      totalSeconds--;
+      renderTime();
+
+      if (totalSeconds <= 0) {
+        clearInterval(countdown);
+        alert('Time is up! Your answers are being submitted automatically.');
+        quizForm.submit();
+      }
+    }, 1000);
+  }
+</script>

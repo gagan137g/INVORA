@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>INVORA - Assessment Results</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: #f8fafc; color: #1e293b; padding: 30px 20px; }
+    .container { max-width: 840px; margin: 0 auto; }
+
+    .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .back-btn { color: #64748b; text-decoration: none; font-size: 0.88rem; font-weight: 500; display: inline-flex; align-items: center; gap: 8px; transition: color 0.15s; }
+    .back-btn:hover { color: #2563eb; }
+
+    /* SUMMARY SCORE CARD */
+    .score-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 30px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); text-align: center; }
+    .score-badge-circle { width: 110px; height: 110px; border-radius: 50%; margin: 0 auto 16px auto; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 800; font-size: 1.8rem; }
+    
+    .score-pass { background: #ecfdf5; color: #059669; border: 4px solid #a7f3d0; }
+    .score-average { background: #fffbeb; color: #d97706; border: 4px solid #fde68a; }
+    .score-fail { background: #fef2f2; color: #dc2626; border: 4px solid #fecaca; }
+
+    .score-card h1 { font-size: 1.4rem; color: #0f172a; margin-bottom: 6px; }
+    .score-card p { font-size: 0.9rem; color: #64748b; margin-bottom: 18px; }
+
+    .stats-row { display: flex; justify-content: center; gap: 30px; margin-top: 15px; padding-top: 15px; border-top: 1px solid #f1f5f9; }
+    .stat-box { display: flex; flex-direction: column; align-items: center; }
+    .stat-val { font-size: 1.15rem; font-weight: 700; color: #1e293b; }
+    .stat-lbl { font-size: 0.78rem; color: #64748b; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
+
+    .action-row { display: flex; justify-content: center; gap: 14px; margin-top: 20px; }
+    .btn-action { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 8px; font-size: 0.88rem; font-weight: 600; text-decoration: none; cursor: pointer; transition: all 0.15s; }
+    .btn-primary { background: #2563eb; color: #ffffff; border: none; }
+    .btn-primary:hover { background: #1d4ed8; }
+    .btn-secondary { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+    .btn-secondary:hover { background: #e2e8f0; }
+
+    /* REVIEW BREAKDOWN */
+    .section-title { font-size: 1.1rem; color: #0f172a; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .review-list { display: flex; flex-direction: column; gap: 16px; }
+    
+    .review-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); border-left: 5px solid #cbd5e1; }
+    .card-correct { border-left-color: #10b981; }
+    .card-incorrect { border-left-color: #ef4444; }
+
+    .review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .q-badge { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
+    .badge-correct { color: #059669; }
+    .badge-incorrect { color: #dc2626; }
+
+    .review-q { font-size: 0.95rem; font-weight: 600; color: #1e293b; line-height: 1.5; margin-bottom: 14px; }
+    
+    .answer-details { display: flex; flex-direction: column; gap: 6px; font-size: 0.88rem; }
+    .ans-row { display: flex; align-items: baseline; gap: 8px; }
+    .ans-tag { font-weight: 700; font-size: 0.76rem; text-transform: uppercase; padding: 2px 8px; border-radius: 4px; min-width: 90px; text-align: center; }
+    
+    .tag-user-correct { background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; }
+    .tag-user-wrong { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+    .tag-correct { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="top-bar">
+      <a href="/dashboard" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
+      <a href="/quiz" class="back-btn"><i class="fa-solid fa-rotate-left"></i> Retake Assessment</a>
+    </div>
+
+    <!-- SUMMARY CARD -->
+    <div class="score-card">
+      <div class="score-badge-circle {% if percentage >= 75 %}score-pass{% elif percentage >= 50 %}score-average{% else %}score-fail{% endif %}">
+        {{ percentage }}%
+      </div>
+
+      <h1>
+        {% if percentage >= 75 %}
+          Excellent Performance! 🎉
+        {% elif percentage >= 50 %}
+          Good Effort! Keep Reviewing 📖
+        {% else %}
+          Needs Revision 💡
+        {% endif %}
+      </h1>
+      <p>Assessment for target material: <strong>{{ doc_name }}</strong></p>
+
+      <div class="stats-row">
+        <div class="stat-box">
+          <span class="stat-val">{{ score }} / {{ total }}</span>
+          <span class="stat-lbl">Questions Correct</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-val">{{ total - score }}</span>
+          <span class="stat-lbl">Incorrect / Missed</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-val">{{ percentage }}%</span>
+          <span class="stat-lbl">Accuracy</span>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <a href="/quiz" class="btn-action btn-primary"><i class="fa-solid fa-arrows-rotate"></i> Practice Another Chapter</a>
+        <a href="/dashboard" class="btn-action btn-secondary"><i class="fa-solid fa-house"></i> Dashboard Overview</a>
+      </div>
+    </div>
+
+    <!-- DETAILED QUESTION BREAKDOWN -->
+    <h2 class="section-title"><i class="fa-solid fa-clipboard-check"></i> Answer Review & Explanations</h2>
+
+    <div class="review-list">
+      {% for item in review %}
+        <div class="review-card {% if item.is_correct %}card-correct{% else %}card-incorrect{% endif %}">
+  <div class="ans-row">
+    <span class="ans-tag {% if item.is_correct %}tag-user-correct{% else %}tag-user-wrong{% endif %}">
+      Your Choice
+    </span>
+    <span class="{% if item.is_correct %}text-correct{% else %}text-incorrect{% endif %}">
+      {{ item.user_answer }}
+    </span>
+  </div>
+
+  {% if not item.is_correct %}
+    <div class="ans-row">
+      <span class="ans-tag tag-correct">Correct Answer</span>
+      <span style="color: #1d4ed8; font-weight: 600;">{{ item.correct_answer }}</span>
+    </div>
+  {% endif %}
+</div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+</body>
+</html>
