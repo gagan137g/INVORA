@@ -618,11 +618,18 @@ def login():
             return render_template("login.html", error=error)
 
         db = get_db_connection()
-        cursor = db.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM users WHERE email=%s", (email,))
-        user = cursor.fetchone()
-        cursor.close()
-        db.close()
+is_sqlite = isinstance(db, sqlite3.Connection)
+
+if is_sqlite:
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM users WHERE email=?", (email,))
+else:
+    cursor = db.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM users WHERE email=%s", (email,))
+
+user = cursor.fetchone()
+cursor.close()
+db.close()
 
         if user and check_password_hash(user["password"], password):
             session["user_id"] = user["id"]
