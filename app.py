@@ -23,8 +23,7 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # Google GenAI Client
-client = genai.Client(api_key="AQ.Ab8RN6I6fYAlMj7Luv2S5TARw98peJ2FRds3AOrFPSl-Db8YuA")
-
+client = genai.Client(api_key="AQ.Ab8RN6LaZhaPjGnHsw9-cC6smM5NGCrt9G0Q2MlVrdmOPDNHMA")
 # =============================================================
 # DATABASE CONNECTION & UNIFIED HELPER
 # =============================================================
